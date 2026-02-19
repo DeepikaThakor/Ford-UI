@@ -6,12 +6,18 @@ import { Geolocation } from '../geolocation';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
-import { MatOption } from '@angular/material/select';
 import { map, startWith } from 'rxjs/operators';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import * as XLSX from 'xlsx'
 import { HttpClient } from '@angular/common/http'
+import { finalize, switchMap, catchError } from 'rxjs/operators';
+import { throwError } from 'rxjs';
 
+type ApiResponse = {
+  data?: {
+    features_options_generated_link?: string;
+  };
+};
 @Component({
   selector: 'app-features',
   imports: [CommonModule, FormsModule, ReactiveFormsModule, MatSelectModule,
@@ -192,11 +198,13 @@ toggleAllSystem() {
       }
     });
   }
+  
 
-  onSubmitClick() {
-    this.Apidata('Pune');
-  }
+  // onSubmitClick() {
+  //   this.Apidata('Pune');
+  // }
 
+  
   async prepareFile(){
     this.isPreparing = true
     this.downloadURL = null
@@ -227,7 +235,81 @@ toggleAllSystem() {
     this.cdk.markForCheck()
   }
  
+
+  private buildRequestBody() {
+  return {
+    years: this.selectedYears,
+    platforms: this.selectedPlatforms,
+    models: this.selectedModels,
+    systems: this.selectedSystems,
+    artifact: this.selectedArtifact,
+    validation: this.selectedValidation,
+  };
+}
  
+private loadExcelFromArrayBuffer(data: ArrayBuffer) {
+  // Parse to table
+  const workbook = XLSX.read(data, { type: 'array' });
+  const sheetName = workbook.SheetNames[0];
+  const worksheet = workbook.Sheets[sheetName];
+  this.tableData = XLSX.utils.sheet_to_json(worksheet);
+ 
+  // Create download link
+  if (this.downloadURL) URL.revokeObjectURL(this.downloadURL);
+  const blob = new Blob([data], {
+    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  });
+  this.downloadURL = URL.createObjectURL(blob);
+}
+ 
+submitAndLoadExcel() {
+  if (!this.isValid()) return;
+ 
+  this.loading = true;
+  this.isPreparing = true;
+  this.Error = false;
+  this.downloadURL = null;
+  this.tableData = [];
+  this.cdk.markForCheck();
+ 
+  const body = this.buildRequestBody();
+ 
+  this.http
+    .post<ApiResponse>('/api/your-endpoint', body) // <-- replace
+    .pipe(
+      switchMap((res) => {
+        const link = res?.data?.features_options_generated_link;
+        if (!link) return throwError(() => new Error('Missing excel link'));
+        return this.http.get(link, { responseType: 'arraybuffer' }); // downloads the excel
+      }),
+      catchError((err) => {
+        // Fallback to your existing dummy flow if API/link fails
+        console.error('API/link failed, using dummy.xlsx:', err);
+        console.log(body)
+        return this.http.get('assets/dummy.xlsx', { responseType: 'arraybuffer' });
+      }),
+      finalize(() => {
+        this.loading = false;
+        this.isPreparing = false;
+        this.cdk.markForCheck();
+      })
+    )
+    .subscribe({
+      next: (data: ArrayBuffer) => {
+        this.loadExcelFromArrayBuffer(data);
+        this.cdk.markForCheck();
+      },
+      error: (err) => {
+        console.error('Excel load failed:', err);
+        this.Error = true;
+        this.cdk.markForCheck();
+      },
+    });
+}
+ 
+onSubmitClick() {
+  this.submitAndLoadExcel();
+}
 }
 
 
