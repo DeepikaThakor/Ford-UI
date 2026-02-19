@@ -1,0 +1,183 @@
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: #fff;
+  border-bottom: 1px solid #e6e6e6;
+}
+ 
+.nav__inner {
+  height: 64px;
+  
+  padding: 0 16px;
+ 
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+ 
+.nav__brand {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+ 
+.nav__logo {
+  height: 28px;
+  width: auto;
+  display: block;
+  justify-content: flex-start;
+}
+ 
+.heading{
+  min-width: 300px;
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #001f4d;
+}
+/* Links: left-aligned, natural width */
+.nav__links {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 40px;
+ 
+  flex: 0 0 auto; /* do not stretch */
+  margin-left: 8px;
+}
+ 
+.nav__links a {
+  color: #111;
+  text-decoration: none;
+  font-size: 16px;
+  line-height: 1;
+  padding: 10px 0;
+  white-space: nowrap;
+}
+ 
+.nav__links a:hover {
+  text-decoration: underline;
+}
+ 
+/* Spacer: not needed when using margin-left:auto on actions */
+/* .nav__spacer {
+  flex: 0 0 auto; 
+  min-width: 0;
+} */
+ 
+/* Actions: pinned to the far right */
+.nav__actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+ 
+  margin-left: auto; /* key: pushes actions to the far right */
+}
+ 
+.icon-btn {
+  width: 40px;
+  height: 40px;
+  border: 0;
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+ 
+.icon-btn svg,
+.locate svg {
+  width: 20px;
+  height: 20px;
+  fill: #111;
+}
+ 
+.locate {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+ 
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+ 
+  height: 40px;
+  padding: 0 10px;
+  border-radius: 999px;
+}
+ 
+.locate:hover {
+  background: #f4f4f4;
+}
+ 
+.locate span {
+  font-size: 14px;
+  color: #111;
+}
+ 
+/* Mobile */
+.nav__hamburger {
+  display: none;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+ 
+.nav__hamburger span {
+  display: block;
+  height: 2px;
+  width: 20px;
+  background: #111;
+  margin: 4px auto;
+}
+ 
+@media (max-width: 900px) {
+  .nav__hamburger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+ 
+  .nav__spacer {
+    display: none;
+  }
+ 
+  .nav__links {
+    position: fixed;
+    top: 64px;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border-bottom: 1px solid #e6e6e6;
+ 
+    display: none;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+ 
+    padding: 10px 16px;
+ 
+    flex: 1 1 auto;
+  }
+ 
+  .nav__links.is-open {
+    display: flex;
+  }
+ 
+  .nav__links a {
+    width: 100%;
+    padding: 14px 0;
+  }
+ 
+  .locate span {
+    display: none;
+  }
+}
+ 
+   
+.nav__spacer{
+  width: 950px;
+}

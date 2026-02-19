@@ -1,0 +1,176 @@
+<div class="page">
+  <main class="wrap">
+    <section class="card">
+      <h1 class="title">Generate Feature &amp; Options</h1>
+      <div class="grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Years</mat-label>
+          <mat-select [(ngModel)]="selectedYears" multiple>
+            <mat-option>
+              <ngx-mat-select-search [formControl]="yearSearchCtrl" placeholderLabel="Search platforms..."
+                noEntriesFoundLabel="No Years found">
+              </ngx-mat-select-search>
+            </mat-option>
+
+            
+              <span class="d-block w-100 px-3 py-2 fs-6" (click)="toggleAllYears()" [style.font-weight]="isAllYearsSelected() ? 'bold' : 'normal'">
+                Select All
+              </span>
+            
+
+
+
+            <!-- <mat-option (click)="toggleAllYears()" (onSelectionChange)="toggleAllYears()"> Select all </mat-option> -->
+            @for (year of filteredYears | async; track year) {
+            <mat-option [value]="year">{{ year }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Platform</mat-label>
+          <mat-select [(ngModel)]="selectedPlatforms" multiple>
+            <mat-option>
+              <ngx-mat-select-search [formControl]="platformSearchCtrl" placeholderLabel="Search platforms..."
+                noEntriesFoundLabel="No platforms found">
+              </ngx-mat-select-search>
+            </mat-option>
+            
+              <span class="d-block w-100 px-3 py-2 fs-6" (click)="toggleAllPlatform()" [style.font-weight]="isAllPlatformSelected() ? 'bold' : 'normal'">
+                Select All
+              </span>
+            
+            @for (platform of filteredPlatforms | async; track platform) {
+            <mat-option [value]="platform">{{ platform }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+
+        <mat-form-field appearance="outline">
+          <mat-label>Artifact</mat-label>
+          <mat-select [(ngModel)]="selectedArtifact">
+            @for (artifact of artifacts; track artifact) {
+            <mat-option [value]="artifact">{{ artifact }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+
+        <mat-form-field appearance="outline">
+          <mat-label>Models</mat-label>
+          <mat-select [(ngModel)]="selectedModels" multiple>
+            <mat-option>
+              <ngx-mat-select-search [formControl]="modelSearchCtrl" placeholderLabel="Search models..."
+                noEntriesFoundLabel="No models found">
+              </ngx-mat-select-search>
+            </mat-option>
+            <span class="d-block w-100 px-3 py-2 fs-6" (click)="toggleAllModel()" [style.font-weight]="isAllModelSelected() ? 'bold' : 'normal'">
+                Select All
+              </span>
+            @for (model of filteredModels | async; track model) {
+            <mat-option [value]="model">{{ model }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+
+        <mat-form-field appearance="outline">
+          <mat-label>System</mat-label>
+          <mat-select [(ngModel)]="selectedSystems" multiple>
+            <mat-option>
+              <ngx-mat-select-search [formControl]="systemSearchCtrl" placeholderLabel="Search systems..."
+                noEntriesFoundLabel="No systems found">
+              </ngx-mat-select-search>
+            </mat-option>
+            <span class="d-block w-100 px-3 py-2 fs-6" (click)="toggleAllSystem()" [style.font-weight]="isAllSystemSelected() ? 'bold' : 'normal'">
+                Select All
+              </span>
+            @for (system of filteredSystems | async; track system) {
+            <mat-option [value]="system">{{ system }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+
+        <mat-form-field appearance="outline">
+          <mat-label>Validation</mat-label>
+          <mat-select [(ngModel)]="selectedValidation">
+            @for (validation of validations; track validation) {
+            <mat-option [value]="validation">{{ validation }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+
+        <div class="actions">
+          <button mat-raised-button color="primary" (click)="onSubmitClick()" [disabled]="!canSubmit()">
+            Submit
+          </button>
+
+          @if (loading || isPreparing) {
+          <div class="loading-container">
+            <div class="spinner-border" role="status">
+              <span class="visually-hidden">Loading</span>
+            </div>
+            <div class="loading-text">
+              {{ loading ? 'Fetching data...' : 'Preparing download...' }}
+            </div>
+          </div>
+          }
+
+          @if (downloadURL) {
+          <a class="msg" [href]="downloadURL" download="dummy.xlsx">
+            Download Excel
+          </a>
+           <div class="d-flex justify-content-center align-items-center">
+      <button class="btn btn-outline-secondary btn-primary" style="background: #001f4d; color: white;"  (click)="toggleTabledata()" *ngIf="downloadURL">
+        Show Table
+      </button>
+    </div>
+          <div *ngIf="tableData.length > 0 && showTable" class="container py-4">
+            <div class="row justify-content-center">
+              <div class="col-12 col-lg-10">
+                <div class="card shadow-sm">
+                  <div class="card-body">
+                    <h5 class="card-title mb-3 text-center">Data</h5>
+
+                    <div class="table-responsive">
+                      <table *ngIf="tableData.length > 0"
+                        class="table table-striped table-hover table-bordered align-middle mb-0">
+                        <thead class="table-dark">
+                          <tr>
+                            <th *ngFor="let key of tableData[0] | keyvalue" class="text-nowrap">
+                              {{ key.key }}
+                            </th>
+                          </tr>
+                        </thead>
+
+                        <tbody>
+                          <tr *ngFor="let row of tableData">
+                            <td *ngFor="let cell of row | keyvalue">
+                              {{ cell.value }}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+
+                    <div *ngIf="tableData.length === 0" class="text-center text-muted py-4">
+                      No data to display.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          }
+        </div>
+
+      </div>
+
+    </section>
+
+
+  </main>
+</div>
