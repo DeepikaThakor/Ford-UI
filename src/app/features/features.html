@@ -4,7 +4,7 @@
       <h1 class="title">Generate Feature &amp; Options</h1>
       <div class="grid">
         <mat-form-field appearance="outline">
-          <mat-label>Years</mat-label>
+          <mat-label>Year</mat-label>
           <mat-select [(ngModel)]="selectedYears" multiple>
             <mat-option>
               <ngx-mat-select-search [formControl]="yearSearchCtrl" placeholderLabel="Search platforms..."
@@ -12,11 +12,12 @@
               </ngx-mat-select-search>
             </mat-option>
 
-            
-              <span class="d-block w-100 px-3 py-2 fs-6" (click)="toggleAllYears()" [style.font-weight]="isAllYearsSelected() ? 'bold' : 'normal'">
-                Select All
-              </span>
-            
+
+            <span class="d-block w-100 px-3 py-2 fs-6" (click)="toggleAllYears()"
+              [style.font-weight]="isAllYearsSelected() ? 'bold' : 'normal'">
+              Select All
+            </span>
+
 
 
 
@@ -29,17 +30,17 @@
 
         <mat-form-field appearance="outline">
           <mat-label>Platform</mat-label>
-          <mat-select [(ngModel)]="selectedPlatforms" >
+          <mat-select [(ngModel)]="selectedPlatforms">
             <mat-option>
               <ngx-mat-select-search [formControl]="platformSearchCtrl" placeholderLabel="Search platforms..."
                 noEntriesFoundLabel="No platforms found">
               </ngx-mat-select-search>
             </mat-option>
-            
-              <!-- <span class="d-block w-100 px-3 py-2 fs-6" (click)="toggleAllPlatform()" [style.font-weight]="isAllPlatformSelected() ? 'bold' : 'normal'">
+
+            <!-- <span class="d-block w-100 px-3 py-2 fs-6" (click)="toggleAllPlatform()" [style.font-weight]="isAllPlatformSelected() ? 'bold' : 'normal'">
                 Select All
               </span> -->
-            
+
             @for (platform of filteredPlatforms | async; track platform) {
             <mat-option [value]="platform">{{ platform }}</mat-option>
             }
@@ -65,9 +66,10 @@
                 noEntriesFoundLabel="No models found">
               </ngx-mat-select-search>
             </mat-option>
-            <span class="d-block w-100 px-3 py-2 fs-6" (click)="toggleAllModel()" [style.font-weight]="isAllModelSelected() ? 'bold' : 'normal'">
-                Select All
-              </span>
+            <span class="d-block w-100 px-3 py-2 fs-6" (click)="toggleAllModel()"
+              [style.font-weight]="isAllModelSelected() ? 'bold' : 'normal'">
+              Select All
+            </span>
             @for (model of filteredModels | async; track model) {
             <mat-option [value]="model">{{ model }}</mat-option>
             }
@@ -83,9 +85,10 @@
                 noEntriesFoundLabel="No systems found">
               </ngx-mat-select-search>
             </mat-option>
-            <span class="d-block w-100 px-3 py-2 fs-6" (click)="toggleAllSystem()" [style.font-weight]="isAllSystemSelected() ? 'bold' : 'normal'">
-                Select All
-              </span>
+            <span class="d-block w-100 px-3 py-2 fs-6" (click)="toggleAllSystem()"
+              [style.font-weight]="isAllSystemSelected() ? 'bold' : 'normal'">
+              Select All
+            </span>
             @for (system of filteredSystems | async; track system) {
             <mat-option [value]="system">{{ system }}</mat-option>
             }
@@ -93,15 +96,14 @@
         </mat-form-field>
 
 
+
         <mat-form-field appearance="outline">
           <mat-label>Validation</mat-label>
           <mat-select [(ngModel)]="selectedValidation">
-            @for (validation of validations; track validation) {
-            <mat-option [value]="validation">{{ validation }}</mat-option>
-            }
+            <mat-option [value]="true">True</mat-option>
+            <mat-option [value]="false">False</mat-option>
           </mat-select>
         </mat-form-field>
-
 
         <div class="actions">
           <button mat-raised-button color="primary" (click)="onSubmitClick()" [disabled]="!canSubmit()">
@@ -123,11 +125,12 @@
           <a class="msg" [href]="downloadURL" download="dummy.xlsx">
             Download Excel
           </a>
-           <div class="d-flex justify-content-center align-items-center">
-      <button class="btn btn-outline-secondary btn-primary" style="background: #001f4d; color: white;"  (click)="toggleTabledata()" *ngIf="downloadURL">
-        Show Table
-      </button>
-    </div>
+          <div class="d-flex justify-content-center align-items-center">
+            <button class="btn btn-outline-secondary btn-primary" style="background: #001f4d; color: white;"
+              (click)="toggleTabledata()" *ngIf="downloadURL">
+              Show Table
+            </button>
+          </div>
           <div *ngIf="tableData.length > 0 && showTable" class="container py-4">
             <div class="row justify-content-center">
               <div class="col-12 col-lg-10">

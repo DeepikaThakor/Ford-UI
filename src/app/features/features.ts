@@ -47,7 +47,7 @@ export class Features {
       'In Car Entertainment Interfaces', 'Driver Information (Electronic)', 'Occupant Restraints', 
       'Security and Locking', 'Exterior Paints', 'Interior Features'];
   artifact_type = ['PDL', 'Order Guide','Monroney Label'];
-  validations = ['True', 'False'];
+  validations:boolean[] = [true, false];
 
    yearSearchCtrl = new FormControl('');
   platformSearchCtrl = new FormControl('');
@@ -155,7 +155,8 @@ toggleAllSystem() {
            this.selectedModels.length > 0 &&
            this.selectedSystems.length > 0 &&
            !!this.selectedArtifact &&
-           !!this.selectedValidation;
+            this.selectedValidation !== null;
+ 
   }
 
   canSubmit(): boolean {
@@ -243,7 +244,7 @@ toggleAllSystem() {
     models: this.selectedModels,
     systems: this.selectedSystems,
     artifact_type: this.selectedArtifact,
-    validation: this.selectedValidation,
+    manual_validation: this.selectedValidation,
   };
 }
  
@@ -278,9 +279,8 @@ submitAndLoadExcel() {
   this.http.post<ApiResponse>('api/data', body).subscribe({
     next: (res) => {
       const link = res?.data?.features_options_generated_link;
-      console.log(link);
+      
       if (!link) {
-        console.log(body);
         this.Error = true;
         this.loading = false;
         this.isPreparing = false;
