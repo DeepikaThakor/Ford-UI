@@ -46,7 +46,7 @@ export class Features {
       'Outlets, Plugs, Powerpoints, Chargers, Cigar Light', 'Speakers', 'In Car Entertainment Pack', 
       'In Car Entertainment Interfaces', 'Driver Information (Electronic)', 'Occupant Restraints', 
       'Security and Locking', 'Exterior Paints', 'Interior Features'];
-  artifacts = ['PDL', 'Order Guide','Monroney Label'];
+  artifact_type = ['PDL', 'Order Guide','Monroney Label'];
   validations = ['True', 'False'];
 
    yearSearchCtrl = new FormControl('');
@@ -75,7 +75,7 @@ export class Features {
   );
 
   selectedYears: string[] = [];
-  selectedPlatforms: string[] = [];
+  selectedPlatforms= '';
   selectedModels: string[] = [];
   selectedSystems: string[] = [];
   selectedArtifact = '';
@@ -101,18 +101,18 @@ toggleAllYears() {
   }
 }
 
-isAllPlatformSelected(): boolean {
-  return this.selectedPlatforms.length === this.platforms.length;
-}
-toggleAllPlatform() {
-  if (this.isAllPlatformSelected()) {
-    this.selectedPlatforms = [];
+// isAllPlatformSelected(): boolean {
+//   return this.selectedPlatforms.length === this.platforms.length;
+// }
+// toggleAllPlatform() {
+//   if (this.isAllPlatformSelected()) {
+//     this.selectedPlatforms = [];
     
-  } else {
-    this.selectedPlatforms = [...this.platforms];
+//   } else {
+//     this.selectedPlatforms = [...this.platforms];
     
-  }
-}
+//   }
+// }
 
 isAllModelSelected(): boolean {
   return this.selectedModels.length === this.models.length;
@@ -242,7 +242,7 @@ toggleAllSystem() {
     platforms: this.selectedPlatforms,
     models: this.selectedModels,
     systems: this.selectedSystems,
-    artifact: this.selectedArtifact,
+    artifact_type: this.selectedArtifact,
     validation: this.selectedValidation,
   };
 }
@@ -268,43 +268,41 @@ submitAndLoadExcel() {
   this.loading = true;
   this.isPreparing = true;
   this.Error = false;
+ 
   this.downloadURL = null;
-  this.tableData = [];
+  this.tableData = []; // optional if you’re not displaying parsed excel anymore
   this.cdk.markForCheck();
  
   const body = this.buildRequestBody();
  
-  this.http
-    .post<ApiResponse>('/api/your-endpoint', body) // <-- replace
-    .pipe(
-      switchMap((res) => {
-        const link = res?.data?.features_options_generated_link;
-        if (!link) return throwError(() => new Error('Missing excel link'));
-        return this.http.get(link, { responseType: 'arraybuffer' }); // downloads the excel
-      }),
-      catchError((err) => {
-        // Fallback to your existing dummy flow if API/link fails
-        console.error('API/link failed, using dummy.xlsx:', err);
-        console.log(body)
-        return this.http.get('assets/dummy.xlsx', { responseType: 'arraybuffer' });
-      }),
-      finalize(() => {
+  this.http.post<ApiResponse>('api/data', body).subscribe({
+    next: (res) => {
+      const link = res?.data?.features_options_generated_link;
+      console.log(link);
+      if (!link) {
+        console.log(body);
+        this.Error = true;
         this.loading = false;
         this.isPreparing = false;
         this.cdk.markForCheck();
-      })
-    )
-    .subscribe({
-      next: (data: ArrayBuffer) => {
-        this.loadExcelFromArrayBuffer(data);
-        this.cdk.markForCheck();
-      },
-      error: (err) => {
-        console.error('Excel load failed:', err);
-        this.Error = true;
-        this.cdk.markForCheck();
-      },
-    });
+        return;
+      }
+ 
+      this.downloadURL = link;
+ 
+      this.loading = false;
+      this.isPreparing = false;
+      this.cdk.markForCheck();
+    },
+    error: (err) => {
+      console.error('API call failed:', err);
+      this.Error = true;
+ 
+      this.loading = false;
+      this.isPreparing = false;
+      this.cdk.markForCheck();
+    },
+  });
 }
  
 onSubmitClick() {

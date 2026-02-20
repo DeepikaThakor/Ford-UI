@@ -29,16 +29,16 @@
 
         <mat-form-field appearance="outline">
           <mat-label>Platform</mat-label>
-          <mat-select [(ngModel)]="selectedPlatforms" multiple>
+          <mat-select [(ngModel)]="selectedPlatforms" >
             <mat-option>
               <ngx-mat-select-search [formControl]="platformSearchCtrl" placeholderLabel="Search platforms..."
                 noEntriesFoundLabel="No platforms found">
               </ngx-mat-select-search>
             </mat-option>
             
-              <span class="d-block w-100 px-3 py-2 fs-6" (click)="toggleAllPlatform()" [style.font-weight]="isAllPlatformSelected() ? 'bold' : 'normal'">
+              <!-- <span class="d-block w-100 px-3 py-2 fs-6" (click)="toggleAllPlatform()" [style.font-weight]="isAllPlatformSelected() ? 'bold' : 'normal'">
                 Select All
-              </span>
+              </span> -->
             
             @for (platform of filteredPlatforms | async; track platform) {
             <mat-option [value]="platform">{{ platform }}</mat-option>
@@ -50,7 +50,7 @@
         <mat-form-field appearance="outline">
           <mat-label>Artifact</mat-label>
           <mat-select [(ngModel)]="selectedArtifact">
-            @for (artifact of artifacts; track artifact) {
+            @for (artifact of artifact_type; track artifact) {
             <mat-option [value]="artifact">{{ artifact }}</mat-option>
             }
           </mat-select>
